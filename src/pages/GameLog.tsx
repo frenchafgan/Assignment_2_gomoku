@@ -32,7 +32,7 @@ const GameLog: React.FC<GameLogProps> = () => {
     useEffect(() => {
         if (id && currentUser) {
             // Fetch the game details from the API
-            fetch(`/api/games/${id}`, {
+            fetch(`/api/game/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

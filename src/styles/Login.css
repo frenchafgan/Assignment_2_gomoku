@@ -1,4 +1,3 @@
-
 .login-wrapper {
     /* Your wrapper styles here */
     display: flex;
@@ -23,7 +22,6 @@
 }
 
 .login-button {
-    /* Your login button styles here */
     width: 50%; /* Same as the input fields */
     padding: 10px;
     background-color: #8D6E63;;

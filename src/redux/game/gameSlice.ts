@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import * as api from '../../../src/api';  // Make sure this import is correct
 import { checkWin, isDraw } from '../../utils/gameUtils'; 
+import axios from 'axios';
 import { RootState } from '../store';
-
 
 interface Move {
   x: number;
@@ -12,6 +12,7 @@ interface Move {
 }
 
 interface GameState {
+  id: string;
   board: number[][];
   currentPlayer: number;
   gameStatus: 'playing' | 'draw' | 'win';
@@ -26,13 +27,16 @@ const initialBoard = Array.from({ length: 20 }, () => Array(20).fill(0));
 const savedBoardSize = localStorage.getItem('boardSize');
 const initialBoardSize = savedBoardSize ? JSON.parse(savedBoardSize) : 10;
 const moves: Move[] = [];
+// username from the loged in user POSTed to the db not localStorge
+ 
 
 const initialState: GameState = {
+  id: '',
   board: initialBoard,
   currentPlayer: 1,
   gameStatus: 'playing',
   boardSize: initialBoardSize,
-  currentUser: null,
+  currentUser: "username",
   moves: moves,
   gamesList: [],
 };
@@ -115,22 +119,33 @@ export const { makeMove, restartGame, setBoardSize, updateGamesList } = gameSlic
 export default gameSlice.reducer;
 
 export const createGame = createAsyncThunk(
-  'game/createGame',
-  async (gameData: any, thunkAPI) => {
+  'game/create',
+  async (gameData , thunkAPI) => {
     const state = thunkAPI.getState() as RootState;  // Get the current Redux state
     const token = state.auth.token;  // Assuming the token is stored in auth slice
+    
+    console.log(gameData);
+    console.log(token);
 
-    // Update the gameData object to include the token
-    gameData.token = token;
 
-    const response = await api.createGame(gameData);  // Use your specific createGame function
+    // Set up headers
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${token}`
+      }
+    };
 
-    return response.data;
+      const response = await axios.post('http://localhost:3001/api/game/create', gameData, config);
+      return response.data;
+
   }
 );
 
 
-export const updateGame = createAsyncThunk('game/updateGame', async ({ gameId, gameData }: any) => {
+
+
+export const updateGame = createAsyncThunk('game/update', async ({ gameId, gameData }: any) => {
   const response = await api.updateGame(gameId, gameData);
   return response.data;
 });
@@ -144,7 +159,7 @@ export const getGamesList = createAsyncThunk('game/getGamesList', async (_, thun
   }
 
   try {
-    const response = await api.getGamesList(token);
+    const response = await api.getGameList(token);
     return response.data;
   } catch (error: unknown) {  // Specify that error is of type unknown
     let errorMessage = 'An unknown error occurred';

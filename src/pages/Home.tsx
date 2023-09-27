@@ -5,6 +5,8 @@ import { RootState } from '../redux/store';
 import { setBoardSize } from '../redux/game/gameSlice';
 import Header from '../components/Header';
 import { AppDispatch } from '../redux/store';
+import { createGame } from '../redux/game/gameSlice';
+// import GameState from '../redux/game/gameSlice';
 
 
 const Home: React.FC = () => {
@@ -12,7 +14,7 @@ const Home: React.FC = () => {
     const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    
+
     useEffect(() => {
         const savedBoardSize = localStorage.getItem('boardSize');
         const initialBoardSize = savedBoardSize ? JSON.parse(savedBoardSize) : 10;  // Default to 10 if not set
@@ -20,11 +22,21 @@ const Home: React.FC = () => {
         dispatch(setBoardSize(initialBoardSize));  // Update Redux state
     }, [dispatch]);
 
-    const handleStartGame = () => {
+    const handleStartGame = async () => {
         if (selectedBoardSize !== null) {
-            localStorage.setItem('boardSize', JSON.stringify(selectedBoardSize));
-            dispatch(setBoardSize(selectedBoardSize)); // Update Redux state here
+            // Prepare the game data to be sent to the API
+            // Make the API call to create a new game
+            try {
+                const response = createGame();
+                console.log("Game created successfully:", response);
+            } catch (error) {
+                console.error("Error creating game:", error);
+            }
+
+            // Update Redux state here
+            dispatch(setBoardSize(selectedBoardSize));
         }
+
         if (!isAuthenticated) {
             navigate('/login');
         } else {
@@ -33,8 +45,8 @@ const Home: React.FC = () => {
     };
 
     const handleBoardSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newSize = parseInt(event.target.value, 10);
-        setSelectedBoardSize(newSize);  // Update local state
+        const newSize = parseInt(event.target.value, 5);
+        setSelectedBoardSize(newSize);  
     };
       
     return (

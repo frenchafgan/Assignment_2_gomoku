@@ -4,12 +4,29 @@ import { RootState } from '../redux/store';
 import { createGame, updateGame, makeMove, restartGame, updateGamesList } from '../redux/game/gameSlice';
 import '../styles/Game.css';
 import { useNavigate } from 'react-router-dom';
-import { saveGameDetails } from '../utils/gameUtils';
+// import { saveGameDetails } from '../utils/gameUtils';
 import Header from '../components/Header';
 import { AppDispatch } from '../redux/store';
-import { getGamesList as getGamesListApi } from '../api';  // Update the path according to your project structure
+import { getGameList } from '../api';  // Update the path according to your project structure
 
-
+// interface Move {
+//     x: number;
+//     y: number;
+//     color: string;
+//     order: number;
+//   }
+  
+//   interface GameState {
+//     id: string;
+//     board: number[][];
+//     currentPlayer: number;
+//     gameStatus: 'playing' | 'draw' | 'win';
+//     boardSize: number; 
+//     currentUser: string | null;
+//     moves: Move[];
+//     gamesList: any[];
+//     token: string;
+//   }
 
 
 
@@ -17,15 +34,14 @@ const Game: React.FC = () => {
     const board = useSelector((state: RootState) => state.game.board);
     const currentPlayer = useSelector((state: RootState) => state.game.currentPlayer);
     const gameStatus = useSelector((state: RootState) => state.game.gameStatus);
-    const username = useSelector((state: RootState) => state.auth.currentUser);
+    // const username = useSelector((state: RootState) => state.auth.currentUser);
     const moves = useSelector((state: RootState) => state.game.moves);
     const currentBoardSize = useSelector((state: RootState) => state.game.boardSize);
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
     const [gameId, setGameId] = useState<string | null>(null);  // Add this line to hold the game ID
     const token = useSelector((state: RootState) => state.auth.token);  // Get the token from Redux store
-
-
+    const gameData = useSelector((state: RootState) => state.game);  // Get the game data from Redux state
 
 
     const handleCellClick = (x: number, y: number) => {
@@ -47,34 +63,25 @@ const Game: React.FC = () => {
             } else if (gameStatus === 'draw') {
                 winner = 'Draw';
             }
-    
-            // Only save the game if it is won or a draw
-            if (gameStatus === 'win' || gameStatus === 'draw') {
-                saveGameDetails(board, winner, username, moves);
+
+             // Only save the game if it is won or a draw
+            if (winner && token) {
+                updateGame({ gameId, gameData: { board, currentPlayer, gameStatus, moves }}               
+            );}
+
+            const action = await dispatch(updateGame({ gameId, gameData: { board, currentPlayer, gameStatus, moves}})).catch((error) => {
+                console.error("Failed to create game:", error);
+              });
+              if (createGame.fulfilled.match(action!)) {
+                setGameId(action.payload._id);
+              }
+              navigate('/games');
+            } catch (error) {
+              console.error("An error occurred while saving game details:", error);
             }
-            const action = await dispatch(createGame({ board, winner, username, moves }));
-            if (createGame.fulfilled.match(action)) {
-                setGameId(action.payload._id);  // Update the game ID here
-            }
-            const gameData = {
-                id: gameId,
-                boardSize: currentBoardSize,
-                date: new Date().toISOString(),
-                result: winner,
-                username: username,
-                moves: moves
-            };
-            await dispatch(createGame(gameData));
-            navigate('/games');
-        } catch (error) {
-            console.error("An error occurred while saving game details:", error);
-        }
     };
     
-    
-    
-    
-      
+         
     const handleRestartGame = async () => {
         // Check if the game is complete and there's a winner
         if (gameStatus === 'win' || gameStatus === 'draw') {
@@ -85,34 +92,28 @@ const Game: React.FC = () => {
             } else if (gameStatus === 'draw') {
                 winner = 'Draw';
             }
+
+            if (winner && token) {
+                createGame();
+                console.log('Restart', gameId, gameData);
+
+            }       
     
             // Save the game details to the database
             try {
-                const action = await dispatch(createGame({ 
-                    board: board, 
-                    winner: winner, 
-                    username: username, 
-                    moves: moves 
-                }));
-                
-                if (createGame.fulfilled.match(action)) {
-                    setGameId(action.payload._id);  // Update the game ID here
+            const action = await dispatch(createGame(   )).catch((error) => {
+                  console.error("Failed to create game:", error);
+                });
+                if (createGame.fulfilled.match(action!)) {
+                  setGameId(action.payload._id);
                 }
-            } catch (error) {
+              } catch (error) {
                 console.error("An error occurred while saving game details:", error);
-                return;  // Exit the function if there's an error
-            }
-            const gameData = {
-                board: board,
-                winner: winner,
-                username: username,
-                moves: moves
-            };
-            await dispatch(createGame(gameData));
-            dispatch(restartGame(currentBoardSize));
+                return;
+              }
+              dispatch(restartGame(currentBoardSize));
 
         }
-        // Restart the game
     };
     
     
@@ -127,7 +128,7 @@ const Game: React.FC = () => {
             try {
                 // Check if the token exists before making the API call
                 if (token) {
-                    const response = await getGamesListApi(token);
+                    const response = await getGameList(token);
                     
                     // Dispatch an action to update the Redux store with the fetched games
                     dispatch(updateGamesList(response.data));
@@ -142,7 +143,8 @@ const Game: React.FC = () => {
     
         // Add token and dispatch as dependencies
     }, [token, dispatch, currentBoardSize]);
-    
+
+ 
 
     
     return (
