@@ -3,13 +3,22 @@ const router = express.Router();
 const Game = require('../models/Game');
 const authorize = require('../middleware/middleware'); // Import the authorization middleware
 
-// Create a new game
 router.post('/create', authorize, async (req, res) => {
-  // Added authorize middleware
+  console.log('Received request body:', req.body); // Log the request body
   const { id, boardSize, date, moves, result, username } = req.body;
+
+  if (!id || !boardSize || !date || !result || !username) {
+    return res.status(400).send('Missing required fields');
+  }
+
   const newGame = new Game({ id, boardSize, date, moves, result, username });
-  await newGame.save();
-  res.status(201).send('Game created');
+  try {
+    await newGame.save();
+    res.status(201).send('Game created');
+  } catch (error) {
+    console.error('Error while saving the game:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // Update a game

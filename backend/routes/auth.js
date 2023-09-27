@@ -12,12 +12,18 @@ router.get('/test', (req, res) => {
 // Signup route
 router.post('/signup', async (req, res) => {
   const { username, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = new User({ username, password: hashedPassword });
-  await newUser.save();
-  res.status(201).send('User created');
+  // Validate username length before saving to the database
   if (username.length < 3 || username.length > 50) {
     return res.status(400).json({ error: 'Invalid username length' });
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = new User({ username, password: hashedPassword });
+  try {
+    await newUser.save();
+    res.status(201).send('User created');
+  } catch (error) {
+    console.error('Error while saving the user:', error);
+    res.status(500).send('Internal Server Error');
   }
 });
 

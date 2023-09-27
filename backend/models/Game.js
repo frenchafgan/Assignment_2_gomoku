@@ -15,16 +15,16 @@ const gameSchema = new mongoose.Schema({
   boardSize: { type: Number, required: true },
   date: { type: Date, required: true },
   moves: {
-    type: Array,
+    type: [moveSchema], // Using the moveSchema here
     validate: {
       validator: function (arr) {
         return arr.length <= 400;
       },
       message: 'Invalid number of moves',
     },
-    result: { type: String, required: true },
-    username: { type: String, required: true },
   },
+  result: { type: String, required: true },
+  username: { type: String, required: true },
 });
 
 module.exports = mongoose.model('Game', gameSchema);
