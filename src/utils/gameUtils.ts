@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 interface Move {
   x: number;
@@ -53,19 +53,18 @@ export const saveGameDetails = async (
   currentUser: string
 ) => {
   try {
-    const token = localStorage.getItem('token');
-    const uniqueId = uuidv4();
-    const newGameId = uniqueId;
-
-    const gameDetails = {
-      id: newGameId,
-      boardSize: board.length,
-      date: new Date().toISOString(),
-      result: winner ? winner : 'Draw',
-      moves: moves,
-      username: username,
-      currentUser: currentUser, // <-- Add this field
-    };
+    // const token = localStorage.getItem('token');
+    // const uniqueId = uuidv4();
+    // const newGameId = uniqueId;
+    // const gameDetails = {
+    //   id: newGameId,
+    //   boardSize: board.length,
+    //   date: new Date().toISOString(),
+    //   result: winner ? winner : 'Draw',
+    //   moves: moves,
+    //   username: username,
+    //   currentUser: currentUser, // <-- Add this field
+    // };
   } catch (error) {
     console.error('An error occurred while saving the game details:', error);
     throw error;

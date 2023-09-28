@@ -2,6 +2,8 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import * as api from '../../../src/api'; // Make sure this import is correct
 import { checkWin, isDraw } from '../../utils/gameUtils';
 import { RootState } from '../store';
+// import { login } from './../../api';
+// import { username } from './../user/userSlice';
 
 interface Move {
   x: number;
@@ -18,6 +20,7 @@ interface GameState {
   currentUser: string | null;
   moves: Move[];
   gamesList: any[];
+  username: string | null;
 }
 
 const initialBoard = Array.from({ length: 20 }, () => Array(20).fill(0));
@@ -33,6 +36,7 @@ const initialState: GameState = {
   currentUser: null,
   moves: moves,
   gamesList: [],
+  username: null,
 };
 
 const gameSlice = createSlice({
@@ -143,11 +147,15 @@ export const updateGame = createAsyncThunk(
 export const getGamesList = createAsyncThunk(
   'game/getGamesList',
   async (_, thunkAPI) => {
-    const state = thunkAPI.getState() as RootState; // Cast the state to RootState
-    const token = state.auth.token; // Get the token from the auth slice
-
+    const state = thunkAPI.getState() as RootState;
+    const token = state.auth.token;
+    const username = state.user.username;
     if (!token) {
       return thunkAPI.rejectWithValue('No token found');
+    }
+
+    if (!username) {
+      return thunkAPI.rejectWithValue('No username found');
     }
 
     try {

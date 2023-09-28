@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '../redux/store';
 import Header from '../components/Header';
 import GameHistoryRow from '../components/GameHistoryRow';
 import '../styles/GameHistory.css';
+import { username } from './Login'; // Import the selector
 
 
 const GameHistory: React.FC = () => {
   const [userGameLogs, setUserGameLogs] = useState<[]>([]);
-  const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+  const currentUser = username;
 
   useEffect(() => {
     // Fetch games from the server based on the username

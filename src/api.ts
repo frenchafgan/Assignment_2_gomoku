@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { store } from './redux/store';
+// import userSlice from './redux/user/userSlice';
+import { username } from './pages/Login'; // Import the selector
 
 axios.defaults.withCredentials = true;
 
@@ -12,6 +14,11 @@ const getToken = () => {
   const state = store.getState();
   return state.auth.token;
 };
+
+// export const getUserName = () => {
+//   const state = store.getState();
+//   return username(state); // Use the selector to get the username
+// };
 
 export const setupAxios = (token: string | null) => {
   if (token) {
@@ -72,7 +79,7 @@ export const updateGame = (gameId: string, gameData: any) => {
 };
 
 export const getGamesList = (token: string) => {
-  return api.get('games', {
+  return api.get(`games/${username}`, {
     headers: {
       Authorization: `${token}`,
     },

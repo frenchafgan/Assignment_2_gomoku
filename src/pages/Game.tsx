@@ -6,7 +6,7 @@ import '../styles/Game.css';
 import { saveGameDetails } from '../utils/gameUtils';
 import Header from '../components/Header';
 import { AppDispatch } from '../redux/store';
-import { getGamesList as getGamesListApi } from '../api';  // Update the path according to your project structure
+import { getGamesList as getGameByIdAndUserApi } from '../api';  // Update the path according to your project structure
 import { useToken } from '../redux/useToken';
 import { setupAxios } from '../api';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +23,7 @@ const Game: React.FC = () => {
   const token = useToken();
   const navigate = useNavigate();
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+  
 
 
 
@@ -43,6 +44,7 @@ const Game: React.FC = () => {
     try {
       let winner: 'Black' | 'White' | 'Draw' | null = null;
       const date = new Date().toISOString();
+      const user = username;
   
       // Determine the winner based on the game status
       if (gameStatus === 'win') {
@@ -53,7 +55,7 @@ const Game: React.FC = () => {
   
     //   // Save game details locally (you can remove this if not needed)
       if ((gameStatus === 'win' || gameStatus === 'draw') && moves !== null) {
-        saveGameDetails(board, date, winner, moves, username, currentUser!);
+        saveGameDetails(board, date, winner, moves, user, currentUser!);
       }
   
       // Prepare the game data to be saved
@@ -61,13 +63,13 @@ const Game: React.FC = () => {
         board,
         winner,
         date,
-        username,
+        username: user,
         moves,
         result: winner,
         boardSize: currentBoardSize,
         currentPlayer,
         gameStatus,
-        currentUser: username,
+        currentUser: user,
         gamesList: []
       };
   
@@ -135,18 +137,16 @@ const Game: React.FC = () => {
     dispatch(restartGame(initialBoardSize));
 
     const fetchGamesList = async () => {
-      try {
+      
         if (token) {
-          const response = await getGamesListApi(token);
+          const response = await getGameByIdAndUserApi(token);
           dispatch(updateGamesList(response.data));
         }
-      } catch (error) {
-        console.error("An error occurred while fetching the games list:", error);
-      }
+   
     };
 
     fetchGamesList();
-  }, [token, dispatch, currentBoardSize]);
+  }, [token, dispatch, username, currentBoardSize]);
 
   return (
     <div>

@@ -6,6 +6,7 @@ const authorize = require('../middleware/middleware'); // Import the authorizati
 // Create a new game
 router.post('/create', authorize, async (req, res) => {
   // Added authorize middleware
+
   const {
     board,
     winner,

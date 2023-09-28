@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import '../styles/Login.css';
 import { AppDispatch } from '../redux/store';
+import { username } from '../redux/user/userSlice';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -24,13 +25,14 @@ const Login: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         dispatch(login({ username, password }));
+        console.log(username);
     };
 
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/');
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, navigate, username]);
 
     return (
         <div>
@@ -60,3 +62,4 @@ const Login: React.FC = () => {
 };
 
 export default Login;
+export { username };
