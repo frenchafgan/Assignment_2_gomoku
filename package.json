@@ -24,7 +24,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "heroku-postbuild": "cd backend && node ./backend/index.js",
+    "heroku-postbuild": "node ./backend/index.js",
     "start": "npm run start-client",
     "start-client": "react-scripts start",
     "start-server": "node ./backend/index.js",
