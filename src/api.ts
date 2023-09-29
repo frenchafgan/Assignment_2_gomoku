@@ -39,7 +39,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const signUp = (userData: any) => {
-  return api.post('auth/signup', userData);
+  return api.post('/auth/signup', userData);
 };
 
 export const login = (userData: any) => {
