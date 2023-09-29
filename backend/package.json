@@ -17,7 +17,6 @@
     "mongoose": "^7.5.2"
   },
   "script": {
-    "start": "node index.js",
-    "heroku-postbuild": "cd backend && npm install && npm run build"
+    "start": "node index.js"
   }
 }
