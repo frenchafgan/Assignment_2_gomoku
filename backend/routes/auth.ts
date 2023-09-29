@@ -1,11 +1,8 @@
-const express = require('express');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const router = express.Router();
 const User = require('../models/User');
 
 // Signup route
-router.post('/signup', async (req, res) => {
+authRoutes.post('/signup', async (req, res) => {
   const { username, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = new User({ username, password: hashedPassword });
@@ -17,7 +14,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // Login route
-router.post('/login', async (req, res) => {
+authRoutes.post('/login', async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
   if (user && (await bcrypt.compare(password, user.password))) {
@@ -33,4 +30,4 @@ router.post('/logout', (req, res) => {
   res.send('Logout');
 });
 
-module.exports = router;
+module.exports = authRoutes;

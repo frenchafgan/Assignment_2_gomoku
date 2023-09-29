@@ -1,14 +1,10 @@
 const express = require('express');
 const app = express();
 const PORT = 3001;
-const authRoutes = require('./routes/auth');
-const gameRoutes = require('./routes/game');
-const authorize = require('./middleware/middleware');
+const authRoutes = require('../backend/routes/auth');
+const gameRoutes = require('../backend/routes/game');
 const mongoose = require('mongoose');
 const Game = require('./models/Game');
-const path = require('path');
-const uri = process.env.MONGODB_URI;
-
 
 // Enable CORS for all routes
 const cors = require('cors');

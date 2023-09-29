@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 const moveSchema = new mongoose.Schema({
   color: { type: String, required: true },
   order: { type: Number, required: true },

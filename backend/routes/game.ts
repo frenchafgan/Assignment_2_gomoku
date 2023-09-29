@@ -1,10 +1,7 @@
-const express = require('express');
 const router = express.Router();
-const Game = require('../models/Game');
-const authorize = require('../middleware/middleware'); // Import the authorization middleware
 
 // Create a new game
-router.post('/create', authorize, async (req, res) => {
+gameRoutes.post('/create', authorize, async (req, res) => {
   // Added authorize middleware
 
   const {
@@ -47,7 +44,7 @@ router.post('/create', authorize, async (req, res) => {
 });
 
 // Update a game
-router.put('/update/:gameId', authorize, async (req, res) => {
+gameRoutes.put('/update/:gameId', authorize, async (req, res) => {
   // Added authorize middleware
   const { gameId } = req.params;
   const { boardSize, date, moves, result, username } = req.body;
@@ -67,7 +64,7 @@ router.put('/update/:gameId', authorize, async (req, res) => {
 });
 
 // Fetch a single game by ID
-router.get('/:gameId', authorize, async (req, res) => {
+gameRoutes.get('/:gameId', authorize, async (req, res) => {
   const { gameId } = req.params;
   const game = await Game.findOne({ id: gameId });
   if (game) {
@@ -78,7 +75,7 @@ router.get('/:gameId', authorize, async (req, res) => {
 });
 
 // Fetch all games by username
-router.get('/user/:username', authorize, async (req, res) => {
+gameRoutes.get('/user/:username', authorize, async (req, res) => {
   const { username } = req.params;
   const games = await Game.find({ username: username });
   if (games) {
