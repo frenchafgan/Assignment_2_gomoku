@@ -6,6 +6,10 @@ const gameRoutes = require('./routes/game');
 const authorize = require('./middleware/middleware');
 const mongoose = require('mongoose');
 const Game = require('./models/Game');
+const path = require("path");
+
+app.use(express.static(path.resolve(__dirname, "./client/build")));
+
 
 // Enable CORS for all routes
 const cors = require('cors');
