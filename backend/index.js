@@ -24,7 +24,8 @@ app.use(express.json());
 // Connect to MongoDB
 mongoose
   .connect(
-    'mongodb+srv://dbuser:Ilovecake123@gomoku.cjr0axx.mongodb.net/?retryWrites=true&w=majority',
+    process.env.REACT_APP_DB_URL ||
+      'mongodb+srv://dbuser:Ilovecake123@gomoku.cjr0axx.mongodb.net/?retryWrites=true&w=majority',
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

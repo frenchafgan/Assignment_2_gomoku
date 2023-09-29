@@ -6,7 +6,7 @@ import { username } from './pages/Login'; // Import the selector
 axios.defaults.withCredentials = true;
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001/', // Replace with your backend URL
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001', // Use environment variable, fallback to localhost
 });
 
 // Function to get token from reduxstore
