@@ -7,8 +7,8 @@ const authorize = require('./middleware/middleware');
 const mongoose = require('mongoose');
 const Game = require('./models/Game');
 const path = require('path');
+const uri = process.env.MONGODB_URI;
 
-app.use(express.static(path.resolve(__dirname, './client/build')));
 
 // Enable CORS for all routes
 const cors = require('cors');
